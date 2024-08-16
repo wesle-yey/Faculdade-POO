@@ -34,10 +34,23 @@ public class AppGUI extends JFrame {
         removerButton.setForeground(Color.WHITE);
         removerButton.setFocusPainted(false);
 
+        JButton emprestarButton = new JButton("Emprestar Livro");
+        emprestarButton.setBackground(new Color(33, 150, 243));  // Azul
+        emprestarButton.setForeground(Color.WHITE);
+        emprestarButton.setFocusPainted(false);
+
+        JButton devolverButton = new JButton("Devolver Livro");
+        devolverButton.setBackground(new Color(255, 193, 7));  // Amarelo
+        devolverButton.setForeground(Color.WHITE);
+        devolverButton.setFocusPainted(false);
+
+
         // Configuração do painel de botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(adicionarButton);
         buttonPanel.add(removerButton);
+        buttonPanel.add(emprestarButton);
+        buttonPanel.add(devolverButton);
 
         // Configuração do painel principal
         JPanel panel = new JPanel(new BorderLayout());
@@ -54,6 +67,12 @@ public class AppGUI extends JFrame {
 
         // Configuração do listener para o botão "Remover Livro"
         removerButton.addActionListener(e -> removerLivroSelecionado());
+
+        // Listener para o botão "Emprestar Livro"
+        emprestarButton.addActionListener(e -> emprestarLivroSelecionado());
+
+// Listener para o botão "Devolver Livro"
+        devolverButton.addActionListener(e -> devolverLivroSelecionado());
 
         // Exibir a janela
         setVisible(true);
@@ -121,6 +140,38 @@ public class AppGUI extends JFrame {
         }
     }
 
+    private void emprestarLivroSelecionado() {
+        int selectedIndex = list1.getSelectedIndex();
+        if (selectedIndex != -1) {
+            Livro livroParaEmprestar = listModel.getElementAt(selectedIndex);
+            if (!livroParaEmprestar.isEmprestado()) {
+                biblioteca.marcarComoEmprestado(livroParaEmprestar);
+                atualizarListaLivros();
+                JOptionPane.showMessageDialog(this, "Livro emprestado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Este livro já está emprestado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um livro para emprestar.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void devolverLivroSelecionado() {
+        int selectedIndex = list1.getSelectedIndex();
+        if (selectedIndex != -1) {
+            Livro livroParaDevolver = listModel.getElementAt(selectedIndex);
+            if (livroParaDevolver.isEmprestado()) {
+                biblioteca.marcarComoDevolvido(livroParaDevolver);
+                atualizarListaLivros();
+                JOptionPane.showMessageDialog(this, "Livro devolvido com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Este livro não está marcado como emprestado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um livro para devolver.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void atualizarListaLivros() {
         listModel.clear();
         for (Livro livro : biblioteca.listarLivros()) {
@@ -135,17 +186,22 @@ public class AppGUI extends JFrame {
             JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value instanceof Livro livro) {
                 label.setText(livro.getNome() + " - " + livro.getAutor());
+                if (livro.isEmprestado()) {
+                    label.setForeground(Color.RED); // Muda a cor para vermelho se o livro estiver emprestado
+                } else {
+                    label.setForeground(Color.BLACK); // Cor padrão para livros disponíveis
+                }
             }
             if (isSelected) {
                 label.setBackground(new Color(0, 123, 255));
                 label.setForeground(Color.WHITE);
             } else {
                 label.setBackground(Color.WHITE);
-                label.setForeground(Color.BLACK);
             }
             return label;
         }
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AppGUI::new);

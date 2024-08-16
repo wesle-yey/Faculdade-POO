@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.in;
 
 public class Biblioteca {
-    private List<Livro> livros= new ArrayList<>();
-    private List<Livro> livrosEmprestados= new ArrayList<>();
+    private final List<Livro> livros= new ArrayList<>();
+    private final List<Livro> livrosEmprestados= new ArrayList<>();
 
     public void adicionarLivro(Livro livro) {
         livros.add(livro);
@@ -41,9 +40,6 @@ public class Biblioteca {
         }
     }
 
-    public List<Livro> listarLivrosEmprestados() {
-        return livrosEmprestados;
-    }
 
     public List<Livro> listarLivros() {
         return livros;
